@@ -8,6 +8,7 @@ var db = require("./models");
 var PORT = 3000;
 
 
+var app = express();
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
  
@@ -84,7 +85,7 @@ app.get("/scrape", function(req, res) {
 // Route for getting all Articles from the db
 app.get("/articles", function(req, res) {
   // Grab every document in the Articles collection
-  db.Article.find({})
+  db.Article.findAll({})
     .then(function(dbArticle) {
       // If we were able to successfully find Articles, send them back to the client
       res.json(dbArticle);
@@ -100,7 +101,7 @@ app.get("/articles/:id", function(req, res) {
   // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
   db.Article.findOne({ _id: req.params.id })
     // ..and populate all of the notes associated with it
-    .populate("note")
+    .populate("summary")
     .then(function(dbArticle) {
       // If we were able to successfully find an Article with the given id, send it back to the client
       res.json(dbArticle);
@@ -129,6 +130,22 @@ app.post("/articles/:id", function(req, res) {
       // If an error occurred, send it to the client
       res.json(err);
     });
+});
+// MY CODE
+app.get("/", function(req, res) {
+  db.Pet.findAll({}).then(function(dbPet) {
+    res.render("index", {
+      msg: "Welcome!",
+      pets: dbPet
+    });
+  });
+});
+app.get("/", function(req, res) {
+  db.Articles.findAll({}).then(function(Article) {
+    res.render("index", {
+     
+    });
+  });
 });
 
 // Start the server
